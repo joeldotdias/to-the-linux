@@ -3,19 +3,10 @@ use std::{
     io::{ self, BufRead, Write }
 };
 
-fn get_full_path(file_path: &str) -> String {
-    let mut full_path = String::from(file_path);
-
-    if !file_path.contains(".") {
-        full_path.push_str(".txt");
-    }
-    return full_path;
-}
 
 pub fn cat_read(file_path: &str) {
-    let full_path = get_full_path(file_path);
-
-    let contents = match fs::read_to_string(full_path) {
+    
+    let contents = match fs::read_to_string(file_path) {
         Ok(file) => file,
         Err(err) => {
             panic!("Oopise daisy! Could not read file {}", err);
@@ -26,7 +17,6 @@ pub fn cat_read(file_path: &str) {
 }
 
 pub fn cat_write(file_path: &str) {
-    let full_path = get_full_path(file_path);
     let mut text_buf: Vec<String> = Vec::new();
 
     loop {
@@ -35,7 +25,7 @@ pub fn cat_write(file_path: &str) {
             .unwrap().unwrap();
         
         if curr_line.as_str() == ":q" {
-            fs::write(full_path, text_buf.join("\n")).unwrap();
+            fs::write(file_path, text_buf.join("\n")).unwrap();
             std::process::exit(0);
         }
         text_buf.push(curr_line);
@@ -43,7 +33,6 @@ pub fn cat_write(file_path: &str) {
 }
 
 pub fn cat_append(file_path: &str) {
-    let full_path = get_full_path(file_path);
     let mut text_buf: Vec<String> = Vec::new();
 
     let mut i = 0;
@@ -55,7 +44,7 @@ pub fn cat_append(file_path: &str) {
         if curr_line.as_str() == ":q" {
             let mut file = OpenOptions::new()
                 .append(true)
-                .open(full_path)
+                .open(file_path )
                 .unwrap();
             
             file.write(text_buf.join("\n").as_bytes()).unwrap();

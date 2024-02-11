@@ -21,7 +21,7 @@ impl Config {
             }
         }
 
-        println!("{:?}", opts); 
+        // println!("{:?}", opts); 
 
         return Ok(Config {command, opts});
     }
