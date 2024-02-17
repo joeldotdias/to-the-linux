@@ -14,7 +14,7 @@ fn sanitize_flags<'a>(flags: &'a str) -> HashMap<&'a str, i32> {
     });
     return clean_flags;
 }
-// 34 opa
+
 pub fn words(file_paths: &[String]) {
     let mut flags: HashMap<&str, i32> = HashMap::new();
     

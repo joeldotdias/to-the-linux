@@ -1,7 +1,7 @@
 pub mod config;
 pub mod textual;
 
-use config::Config;
+use config::{ Config, Command };
 use textual::{
     cat::{ cat_read, cat_write, cat_append },
     wc::words
@@ -9,8 +9,8 @@ use textual::{
 
 pub fn take_to_op(config: &Config) {
     
-    match config.command.as_str() {
-        "cat" => {
+    match config.command {
+        Command::Cat => {
             if config.opts.len() == 1 {
                 let file_path = get_full_path(&config.opts[0]);
                 cat_read(&file_path);
@@ -26,15 +26,27 @@ pub fn take_to_op(config: &Config) {
                     }
                 }
             }  
-        },
-        "wc" => {
+        }
+
+        Command::Wc => {
             let file_paths = config.opts.iter().map(|f| {
                 get_full_path(f)
             }).collect::<Vec<String>>();
             
             words(&file_paths);
         }
-        _ => {}
+
+        Command::Head => {
+            // let 
+        }
+
+        Command::Tail => {
+
+        }
+
+        Command::Help => {
+
+        }
     }
 
 }
