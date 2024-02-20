@@ -1,6 +1,6 @@
 use std::{
-    fs::{ self, OpenOptions },
-    io::{ self, BufRead, Write }
+    io::Write,
+    fs::{ self, OpenOptions }
 };
 
 
@@ -16,45 +16,17 @@ pub fn cat_read(file_path: &str) {
     println!("{}", contents);
 }
 
-pub fn cat_write(file_path: &str) {
-    let mut text_buf: Vec<String> = Vec::new();
-
-    loop {
-        let curr_line = io::stdin()
-            .lock().lines().next()
-            .unwrap().unwrap();
-        
-        if curr_line.as_str() == ":q" {
-            fs::write(file_path, text_buf.join("\n")).unwrap();
-            std::process::exit(0);
-        }
-        text_buf.push(curr_line);
-    }
+pub fn cat_write(text_buf: &[String], file_path: &str) {
+    fs::write(file_path, text_buf.join("\n")).unwrap();
 }
 
-pub fn cat_append(file_path: &str) {
-    let mut text_buf: Vec<String> = Vec::new();
+pub fn cat_append(text_buf: &mut [String], file_path: &str) {
+    text_buf[0].insert_str(0, "\n");
 
-    let mut i = 0;
-    loop {
-        let mut curr_line = io::stdin()
-            .lock().lines().next()
-            .unwrap().unwrap();
-        
-        if curr_line.as_str() == ":q" {
-            let mut file = OpenOptions::new()
-                .append(true)
-                .open(file_path )
-                .unwrap();
-            
-            file.write(text_buf.join("\n").as_bytes()).unwrap();
-            std::process::exit(0);
-        }
-
-        if i == 0 {
-            curr_line.insert_str(0, "\n");       
-        }
-        text_buf.push(curr_line);
-        i += 1;
-    }
+    let mut file = OpenOptions::new()
+        .append(true)
+        .open(file_path )
+        .unwrap();
+    
+    file.write(text_buf.join("\n").as_bytes()).unwrap();
 }
