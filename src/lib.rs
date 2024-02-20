@@ -1,10 +1,11 @@
 pub mod config;
-pub mod textual;
+pub mod files_stuff;
 
 use config::{ Config, Command };
-use textual::{
+use files_stuff::{
     cat::{ cat_read, cat_write, cat_append },
-    wc::words
+    wc::words,
+    head_tail::{ head, tail }
 };
 
 pub fn take_to_op(config: &Config) {
@@ -37,11 +38,18 @@ pub fn take_to_op(config: &Config) {
         }
 
         Command::Head => {
-            // let 
+            let file_path = config.opts.iter().map(|f| {
+                get_full_path(f)
+            }).collect::<Vec<String>>();
+
+            head(&file_path);
         }
 
-        Command::Tail => {
-
+        | Command::Tail => {
+            let file_path = config.opts.iter().map(|f| {
+                get_full_path(f)
+            }).collect::<Vec<String>>();
+            tail(&file_path);
         }
 
         Command::Help => {
