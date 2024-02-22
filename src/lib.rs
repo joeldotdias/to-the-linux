@@ -9,7 +9,11 @@ use files_stuff::{
     head_tail::{ head, tail }
 };
 
-pub fn take_to_op(config: &Config) {
+pub fn do_the_ops(configs: &[Config]) {
+    // Todo
+}
+
+fn take_to_op(config: &Config) {
     
     match config.command {
         Command::Cat => {

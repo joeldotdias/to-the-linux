@@ -1,17 +1,16 @@
 use std::env;
-use ttl::config::Config;
-use ttl::take_to_op;
+use ttl::config::parse_commands;
+use ttl::do_the_ops;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
-
-    let conf = match Config::to_the_linux(&args) {
-        Ok(conf) => conf,
+    
+    let commands = match parse_commands(&args) {
+        Ok(cmds) => cmds,
         Err(err) => {
-            panic!("AAAAAAAA {}", err);
+            panic!("AAAAAAAA: {}", err);
         }
     };
 
-    // println!("Args: {}, {:#?}", conf.command, conf.opts);
-    take_to_op(&conf);
+
 }
