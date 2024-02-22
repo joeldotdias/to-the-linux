@@ -9,14 +9,19 @@ pub enum Command {
 
 impl Command {
     fn from_str(cmd_str: &str) -> Result<Self, String> {
-        match cmd_str {
-            "help" => Ok(Command::Help),
-            "cat" => Ok(Command::Cat),
-            "wc" => Ok(Command::Wc),
-            "head" => Ok(Command::Head),
-            "tail" => Ok(Command::Tail),
-            _ => Err(format!("Command {} not found", cmd_str))
-        }
+        let cmd = match cmd_str {
+            "help" => Command::Help,
+            "cat" => Command::Cat,
+            "wc" => Command::Wc,
+            "head" => Command::Head,
+            "tail" => Command::Tail,
+            
+            _ => {
+                return Err(format!("Command {} not found", cmd_str));
+            }
+        };
+
+        return Ok(cmd);
     }
 }
 
@@ -37,7 +42,7 @@ impl Config {
         };
 
         let opts = parts[1..].into_iter()
-            .map(|p| p.to_string())
+            .map(|opt| opt.to_string())
             .collect::<Vec<String>>();
 
         return Ok(Config { command, opts });
