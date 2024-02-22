@@ -42,66 +42,6 @@ impl Config {
 
         return Ok(Config { command, opts });
     }
-    // pub fn to_the_linux(args: &[String]) -> Result<Self, &str> {
-    //     println!("{:?}", args);
-
-    //     if args.len() <= 1 {
-    //         return Err("Args not enough");
-    //     }
-
-    //     let command = match Command::from_str(&args[1]) {
-    //         Ok(command) => command,
-    //         Err(err_str) => {
-    //             println!("{}", err_str);
-    //             std::process::exit(1);
-    //         }
-    //     };
-        
-    //     let mut opts = Vec::<String>::new();
-    //     if args.len() >= 2 {
-    //         for i in 2..args.len() {
-    //             opts.push(args[i].clone());    
-    //         }
-    //     }
-
-    //     // println!("{:?}", opts); 
-
-    //     return Ok(Config {commands: command, opts});
-    // }
-
-    // pub fn parse_cmd_strs(cmd_strs) {
-
-    // }
-
-    // pub fn to_the_linux(args: &[String]) -> Result<Self, &str> {
-    //     println!("{:?}", args);
-
-    //     if args.len() <= 1 {
-    //         return Err("Args not enough");
-    //     }
-
-    //     let commands = parse_commands(&args[1..]);
-
-    //     let command = match Command::from_str(&args[1]) {
-    //         Ok(command) => command,
-    //         Err(err_str) => {
-    //             println!("{}", err_str);
-    //             std::process::exit(1);
-    //         }
-    //     };
-        
-    //     let mut opts = Vec::<String>::new();
-    //     if args.len() >= 2 {
-    //         for i in 2..args.len() {
-    //             opts.push(args[i].clone());    
-    //         }
-    //     }
-
-    //     // println!("{:?}", opts); 
-
-    //     // return Ok(Config {commands: command, opts});
-    //     return Err("Nope");
-    // }
 }
 
 pub fn parse_commands(args: &[String]) -> Result<Vec<Config>, String> {
