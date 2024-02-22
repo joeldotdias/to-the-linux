@@ -12,5 +12,5 @@ fn main() {
         }
     };
 
-
+    do_the_ops(&commands);
 }

@@ -36,7 +36,7 @@ impl Config {
             }
         };
 
-        let opts = parts[1..0].into_iter()
+        let opts = parts[1..].into_iter()
             .map(|p| p.to_string())
             .collect::<Vec<String>>();
 
