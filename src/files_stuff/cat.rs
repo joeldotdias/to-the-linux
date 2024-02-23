@@ -4,7 +4,7 @@ use std::{
 };
 
 
-pub fn cat_read(file_path: &str) {
+pub fn cat_read(file_path: &str) -> String{
     
     let contents = match fs::read_to_string(file_path) {
         Ok(file) => file,
@@ -13,7 +13,8 @@ pub fn cat_read(file_path: &str) {
         }
     };
 
-    println!("{}", contents);
+    // println!("{}", contents);
+    return contents;
 }
 
 pub fn cat_write(text_buf: &[String], file_path: &str) {

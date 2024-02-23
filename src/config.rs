@@ -32,7 +32,7 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn from_str(config_str: &str) -> Result<Self, String> {
+    fn from_str(config_str: &str) -> Result<Self, String> {
         let parts = config_str.split(" ").collect::<Vec<&str>>();
         let command = match Command::from_str(parts[0]) {
             Ok(command) => command,
@@ -49,7 +49,7 @@ impl Config {
     }
 }
 
-pub fn parse_commands(args: &[String]) -> Result<Vec<Config>, String> {
+pub fn parse_args(args: &[String]) -> Result<Vec<Config>, String> {
     
     if args.len() <= 1 {
         return Err(String::from("Args not enough"));

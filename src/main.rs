@@ -1,16 +1,16 @@
 use std::env;
-use ttl::config::parse_commands;
-use ttl::do_the_ops;
+use ttl::config::parse_args;
+use ttl::exec_ops;
 
 fn main() {
     let args: Vec<String> = env::args().collect();
     
-    let commands = match parse_commands(&args) {
+    let commands = match parse_args(&args) {
         Ok(cmds) => cmds,
         Err(err) => {
             panic!("AAAAAAAA: {}", err);
         }
     };
 
-    do_the_ops(&commands);
+    exec_ops(&commands);
 }
