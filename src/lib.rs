@@ -1,6 +1,7 @@
 pub mod config;
 pub mod files_stuff;
 
+use std::io::{ self, BufRead };
 use config::{ Config, Command };
 use files_stuff::{
     cat::{ cat_read, cat_write, cat_append },
@@ -8,19 +9,38 @@ use files_stuff::{
     head_tail::{ head, tail }
 };
 
-pub fn take_to_op(config: &Config) {
-    
+pub fn exec_ops(configs: &[Config]) {
+    let mut prev_result = String::new();
+    configs.iter().for_each(|config| {
+        prev_result = to_the_op(&config, &prev_result)
+    });
+
+    if !prev_result.is_empty() {
+        println!("{}", prev_result);
+    }
+}
+
+fn to_the_op(config: &Config, prev_out: &str) -> String {
+    let mut curr_out = String::new();
+
     match config.command {
         Command::Cat => {
             if config.opts.len() == 1 {
                 let file_path = get_full_path(&config.opts[0]);
-                cat_read(&file_path);
+                curr_out = cat_read(&file_path);
             }
             else if config.opts.len() == 2 {
                 let file_path = get_full_path(&config.opts[1]);
+                let mut to_write = if prev_out.is_empty() { 
+                    get_input()
+                } else {
+                    prev_out.split("\n").map(|line| String::from(line))
+                        .collect::<Vec<String>>()
+                };
+                
                 match config.opts[0].as_str() {
-                    "to" => cat_write(&file_path),
-                    "on" => cat_append(&file_path),
+                    "to" => cat_write(&to_write, &file_path),
+                    "on" => cat_append(&mut to_write, &file_path),
                     _ => {
                         println!("Incorrect args provided");
                         std::process::exit(1);
@@ -57,6 +77,7 @@ pub fn take_to_op(config: &Config) {
         }
     }
 
+    return String::from(curr_out);
 }
 
 fn get_full_path(file_path: &str) -> String {
@@ -66,4 +87,21 @@ fn get_full_path(file_path: &str) -> String {
         full_path.push_str(".txt");
     }
     return full_path;
+}
+
+fn get_input() -> Vec<String> {
+    let mut text_buf: Vec<String> = Vec::new();
+    
+    loop {
+        let curr_line = io::stdin()
+            .lock().lines().next()
+            .unwrap().unwrap();
+        
+        if curr_line.as_str() == ":q" {
+            break;
+        }
+        text_buf.push(curr_line);
+    }
+
+    return text_buf;
 }
