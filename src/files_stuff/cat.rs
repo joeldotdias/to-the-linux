@@ -13,7 +13,6 @@ pub fn cat_read(file_path: &str) -> String{
         }
     };
 
-    // println!("{}", contents);
     return contents;
 }
 
