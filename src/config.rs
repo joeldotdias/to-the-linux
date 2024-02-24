@@ -1,3 +1,6 @@
+use std::str::FromStr;
+use crate::error::CmdParseError;
+
 #[derive(Debug)]
 pub enum Command {
     Help,
@@ -7,8 +10,10 @@ pub enum Command {
     Tail,
 }
 
-impl Command {
-    fn from_str(cmd_str: &str) -> Result<Self, String> {
+impl FromStr for Command {
+    type Err = CmdParseError;
+    
+    fn from_str(cmd_str: &str) -> Result<Self, CmdParseError> {
         let cmd = match cmd_str {
             "help" => Command::Help,
             "cat" => Command::Cat,
@@ -17,7 +22,7 @@ impl Command {
             "tail" => Command::Tail,
             
             _ => {
-                return Err(format!("Command {} not found", cmd_str));
+                return Err(CmdParseError { err_msg: format!("{} doesn't exist", cmd_str) });
             }
         };
 
@@ -31,8 +36,10 @@ pub struct Config {
     pub opts: Vec<String>
 }
 
-impl Config {
-    fn from_str(config_str: &str) -> Result<Self, String> {
+impl FromStr for Config {
+    type Err = CmdParseError;
+
+    fn from_str(config_str: &str) -> Result<Self, CmdParseError> {
         let parts = config_str.split(" ").collect::<Vec<&str>>();
         let command = match Command::from_str(parts[0]) {
             Ok(command) => command,
@@ -49,22 +56,26 @@ impl Config {
     }
 }
 
-pub fn parse_args(args: &[String]) -> Result<Vec<Config>, String> {
-    
-    if args.len() <= 1 {
-        return Err(String::from("Args not enough"));
+impl Config {
+    pub fn parse_args(args: &[String]) -> Result<Vec<Self>, String> {
+        if args.len() <= 1 {
+            return Err(String::from("Args not enough"));
+        }
+
+        let raw_args = args[1..].join(" ");
+        let config_strs = raw_args.split(" into ");
+
+        let configs = config_strs.map(|conf_str| {
+            match Config::from_str(&conf_str) {
+                Ok(conf) => conf,
+                Err(err) => {
+                    panic!("{}", err);
+                }
+            }
+        }).collect::<Vec<Config>>();
+
+        println!("{:?}", configs);
+
+        return Ok(configs);
     }
-    
-    let raw_args = args[1..].join(" ");
-    let config_strs = raw_args.split(" into ").collect::<Vec<&str>>();
-
-    
-    let configs: Vec<Config> = config_strs.into_iter()
-        .map(|conf_str| Config::from_str(&conf_str).unwrap())
-        .collect();
-
-
-    println!("{:?}", configs);
-
-    return Ok(configs);
 }

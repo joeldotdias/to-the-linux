@@ -1,19 +1,12 @@
 use std::{
-    collections::HashMap,
-    fs
+    fs,
+    collections::HashMap
 };
 
 
 fn sanitize_flags<'a>(flags: &'a str) -> HashMap<&'a str, i32> {
-    // let mut clean_flags = HashMap::new();
-    
-    // flags.split("").for_each(|flag| {
-    //     if flag != "" && flag!= "-" {
-    //         clean_flags.insert(flag, -1);
-    //     }
-    // });
-    let clean_flags: HashMap<&str, i32> = flags.split(" ").filter_map(|flag|
-        (flag != "" && flag != "-").then(|| (flag, -1))
+    let clean_flags: HashMap<&str, i32> = flags.split("").filter_map(|flag|
+        (flag != "" && flag!= "-").then(|| (flag, -1))
     ).collect();
 
     return clean_flags;
