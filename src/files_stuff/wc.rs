@@ -1,71 +1,84 @@
-use std::{
-    fs,
-    collections::HashMap
-};
+use core::panic;
+use std::{ fs, vec };
 
-
-fn sanitize_flags<'a>(flags: &'a str) -> HashMap<&'a str, i32> {
-    let clean_flags: HashMap<&str, i32> = flags.split("").filter_map(|flag|
-        (flag != "" && flag!= "-").then(|| (flag, -1))
-    ).collect();
-
-    return clean_flags;
-}
-
-pub fn words(file_paths: &[String]) {
-    let mut flags: HashMap<&str, i32> = HashMap::new();
-    
-    if file_paths[0].starts_with("-") {
-        flags = sanitize_flags(&file_paths[0]);
-    }
-    let needs_l = flags.contains_key("l");
-    let needs_w = flags.contains_key("w");
-    let needs_b = flags.contains_key("b");
-
-
-    for (i, file_path) in file_paths.iter().enumerate() {
-
-        if flags.len() != 0 && i == 0 {
-            continue;
-        }
-
-        let contents = match fs::read_to_string(file_path) {
-            Ok(file) => file,
-            Err(err) => {
-                panic!("Oopise daisy! Could not read file {}", err);
+fn make_stats<'a, I> (flags: Option<&'a str>, file_contents: I) -> impl Iterator<Item = String> + '_
+    where 
+        I: Iterator<Item = String> + 'a
+    {
+        let default_stats = vec!["l", "w", "b"];
+        
+        let reqd_stats = match flags {
+            Some(flags) => {
+                flags.split("").filter_map(|ch| {
+                    (ch != "" && ch!= "-").then(|| ch)
+                }).collect()
             }
+            None => default_stats
         };
         
-        let mut lc = 0;
-        let mut wc = 0;
-        let bc = contents.as_bytes().len();
-
-        contents.split("\n").for_each(|line| {
-            lc += 1;
-            wc += line.split(" ").collect::<Vec<&str>>().len();
+        let stats = file_contents.map(move |contents| {
+            get_stat_str(&reqd_stats[0..], &contents)
         });
 
-        if needs_l {
-            flags.entry("l").and_modify(|count| *count = lc);
-        }
-        if needs_w {
-            flags.entry("w").and_modify(|count| *count = wc as i32);
-        }
-        if needs_b {
-            flags.entry("b").and_modify(|count| *count = bc as i32);
-        }  
+        return stats;
+}
 
-        
-        if flags.len() == 0 {
-            println!("l{} w{} b{} {}", lc, wc, bc, file_path);
-            continue;
-        }
-
-        let mut base_str = String::new();
-        for (flag, count) in flags.iter() {
-            base_str.push_str(&format!("{}{} ", *flag, *count));
-        }
-        base_str.push_str(&file_path);
-        println!("{}", base_str);
+pub fn word_stats(file_paths: &[String]) -> String {
+    let flags: Option<&str> = if file_paths[0].starts_with("-") {
+        Some(&(file_paths[0]))
+    } else {
+        None
     };
+
+    let files_start_idx = match flags {
+        Some(_) => 1,
+        None => 0
+    };
+    
+    let contents = file_paths[files_start_idx..].iter().map(|path| {
+        match fs::read_to_string(path) {
+            Ok(file_contents) => file_contents,
+            Err(err) => {
+                panic!("{}", err);
+            }
+        }
+    });
+
+    let mut stats = make_stats(flags, contents).collect::<Vec<String>>();
+
+    for i in 0..stats.len() {
+        stats[i].push_str(&(file_paths[i + files_start_idx]));
+    }
+
+    return stats.join("\n");
+}
+
+fn get_stat_str(flags: &[&str], file_contents: &str) -> String {
+    let mut stat_str = String::new();
+
+    let file_lines = file_contents.lines();
+    let (mut lc, mut wc, bc) = (0, 0, file_contents.as_bytes().len());
+    file_lines.for_each(|line| {
+        lc += 1;
+        wc += line.split(" ").count();
+    });
+    
+    flags.iter().for_each(|flag| {
+        match *flag {
+            "l" =>{
+                stat_str.push_str(format!("l{} ", lc).as_str());
+            }
+            "w" => {
+                stat_str.push_str(format!("w{} ", wc).as_str());
+            }
+            "b" => {
+                stat_str.push_str(format!("b{} ", bc).as_str());
+            }
+            _ => {
+                panic!("{} doesn't exist", flag)
+            } 
+        }
+    });
+
+    return stat_str;
 }

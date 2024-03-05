@@ -2,7 +2,13 @@ use std::{error, fmt};
 
 #[derive(Debug)]
 pub struct CmdParseError {
-    pub err_msg: String
+    err_msg: String
+}
+
+impl From<&str> for CmdParseError {
+    fn from(cmd: &str) -> Self {
+        CmdParseError { err_msg: format!("{} doesn't exist", cmd) }
+    }
 }
 
 impl fmt::Display for CmdParseError {

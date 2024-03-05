@@ -3,7 +3,7 @@ use crate::{
     config::{ Config, Command },
     files_stuff::{
         cat::{ cat_read, cat_write, cat_append },
-        wc::words,
+        wc::word_stats,
         head_tail::{ head, tail }
     }
 };
@@ -25,11 +25,7 @@ fn to_the_op(config: &Config, prev_out: &str) -> String {
 
     match config.command {
         Command::Cat => {
-            if config.opts.len() == 1 {
-                let file_path = get_full_path(&config.opts[0]);
-                curr_out = cat_read(&file_path);
-            }
-            else if config.opts.len() == 2 {
+            if config.opts.contains(&("to".to_string())) || config.opts.contains(&("on".to_string())) {
                 let file_path = get_full_path(&config.opts[1]);
                 let mut to_write = if prev_out.is_empty() { 
                     get_input()
@@ -45,15 +41,23 @@ fn to_the_op(config: &Config, prev_out: &str) -> String {
                         panic!("Incorrect args provided");
                     }
                 }
+            } else {
+                let file_paths = config.opts[0..].iter().map(|file| {
+                    get_full_path(&file)
+                }).collect::<Vec<String>>(); 
+                
+                curr_out = cat_read(&file_paths);
+                   
             }  
         }
 
         Command::Wc => {
             let file_paths = config.opts.iter().map(|f| {
                 get_full_path(f)
-            }).collect::<Vec<String>>();
+            })
+            .collect::<Vec<String>>();
             
-            words(&file_paths);
+            curr_out = word_stats(&file_paths);
         }
 
         Command::Head => {
@@ -64,7 +68,7 @@ fn to_the_op(config: &Config, prev_out: &str) -> String {
             head(&file_path);
         }
 
-        | Command::Tail => {
+        Command::Tail => {
             let file_path = config.opts.iter().map(|f| {
                 get_full_path(f)
             }).collect::<Vec<String>>();
@@ -104,3 +108,7 @@ fn get_input() -> Vec<String> {
 
     return text_buf;
 }
+
+// fn contents_from_files(file_paths: &[String]) -> Vec<String> {
+
+// }

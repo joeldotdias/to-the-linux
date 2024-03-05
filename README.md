@@ -3,7 +3,7 @@
 ttl is a lightweight command line utility that lets you execute Linux (or Unix based) commands on Windows. The syntax and output have been tweaked a little to be more understandable.<br>
 The intention behind making this project is simply to build a cli tool. This README is being written just in case anyone actually ends up using it. This will (hopefully) be my last project on Windows.
 
-## Syntax
+## Usage
 Every command is prefixed with `ttl`<br>
 A basic skeleton of each command would look like `ttl <command> <opts>`
 
@@ -28,7 +28,7 @@ A basic skeleton of each command would look like `ttl <command> <opts>`
       `wc -<flags> <filename 1> <filename 2> ... <filename n>`
     - **Examples** <br>
       <img alt="ttl cat example" height="170" src="/images/wc.png" />
-      
-      
-      
-      
+
+
+
+

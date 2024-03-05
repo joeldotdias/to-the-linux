@@ -1,5 +1,5 @@
 use std::env;
-use ttl:: {
+use ttl::{
     config::Config,
     exec::exec_ops
 };

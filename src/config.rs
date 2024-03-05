@@ -22,7 +22,7 @@ impl FromStr for Command {
             "tail" => Command::Tail,
             
             _ => {
-                return Err(CmdParseError { err_msg: format!("{} doesn't exist", cmd_str) });
+                return Err(CmdParseError::from(cmd_str));
             }
         };
 
@@ -74,7 +74,7 @@ impl Config {
             }
         }).collect::<Vec<Config>>();
 
-        println!("{:?}", configs);
+        // println!("{:?}", configs);
 
         return Ok(configs);
     }

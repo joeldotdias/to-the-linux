@@ -1,9 +1,9 @@
 
 pub fn head(file_paths: &[String]) {
-// Todo
+    todo!()
 
 }
 
 pub fn tail(file_path: &[String]) {
-// Todo
+    todo!()
 }
