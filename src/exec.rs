@@ -1,7 +1,7 @@
 use std::io::{ self, BufRead };
 use crate::{
     config::{ Config, Command },
-    files_stuff::{
+    cmdeez::{
         cat::{ cat_read, cat_write, cat_append },
         wc::word_stats,
         head_tail::{ head, tail }
@@ -25,7 +25,7 @@ fn to_the_op(config: &Config, prev_out: &str) -> String {
 
     match config.command {
         Command::Cat => {
-            if config.opts.contains(&("to".to_string())) || config.opts.contains(&("on".to_string())) {
+            if config.opts.contains(&("to".into())) || config.opts.contains(&("on".into())) {
                 let file_path = get_full_path(&config.opts[1]);
                 let mut to_write = if prev_out.is_empty() { 
                     get_input()
@@ -89,7 +89,8 @@ fn get_full_path(file_path: &str) -> String {
     if !file_path.starts_with("-") && !file_path.contains(".") {
         full_path.push_str(".txt");
     }
-    return full_path;
+    
+    return full_path.replace(".\\", "");
 }
 
 fn get_input() -> Vec<String> {
