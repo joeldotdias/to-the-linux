@@ -30,5 +30,7 @@ A basic skeleton of each command would look like `ttl <command> <opts>`
       <img alt="ttl cat example" height="170" src="/images/wc.png" />
 
 
-
-
+## Piping
+As of now, basic piping works.
+Example: Writing the word counts of multiple files to another file
+<img alt="ttl cat example" height="170" src="/images/piping-wc-cat.png" />

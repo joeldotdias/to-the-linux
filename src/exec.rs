@@ -12,7 +12,7 @@ use crate::{
 pub fn exec_ops(configs: &[Config]) {
     let mut prev_result = String::new();
     configs.iter().for_each(|config| {
-        prev_result = to_the_op(&config, &prev_result)
+        prev_result = to_the_op(config, &prev_result)
     });
 
     if !prev_result.is_empty() {
@@ -30,7 +30,7 @@ fn to_the_op(config: &Config, prev_out: &str) -> String {
                 let mut to_write = if prev_out.is_empty() { 
                     get_input()
                 } else {
-                    prev_out.split("\n").map(|line| String::from(line))
+                    prev_out.split('\n').map(|line| String::from(line))
                         .collect::<Vec<String>>()
                 };
                 
@@ -43,7 +43,7 @@ fn to_the_op(config: &Config, prev_out: &str) -> String {
                 }
             } else {
                 let file_paths = config.opts[0..].iter().map(|file| {
-                    get_full_path(&file)
+                    get_full_path(file)
                 }).collect::<Vec<String>>(); 
                 
                 curr_out = cat_read(&file_paths);
@@ -57,7 +57,12 @@ fn to_the_op(config: &Config, prev_out: &str) -> String {
             })
             .collect::<Vec<String>>();
             
-            curr_out = word_stats(&file_paths);
+            let piped_input = if !prev_out.is_empty() {
+                Some(prev_out.into())
+            } else {
+                None
+            };
+            curr_out = word_stats(&file_paths, piped_input);
         }
 
         Command::Head => {
@@ -80,17 +85,17 @@ fn to_the_op(config: &Config, prev_out: &str) -> String {
         }
     }
 
-    return String::from(curr_out);
+    curr_out
 }
 
 fn get_full_path(file_path: &str) -> String {
     let mut full_path = String::from(file_path);
 
-    if !file_path.starts_with("-") && !file_path.contains(".") {
+    if !file_path.starts_with('-') && !file_path.contains('.') {
         full_path.push_str(".txt");
     }
     
-    return full_path.replace(".\\", "");
+    full_path.replace(".\\", "")
 }
 
 fn get_input() -> Vec<String> {
@@ -107,9 +112,5 @@ fn get_input() -> Vec<String> {
         text_buf.push(curr_line);
     }
 
-    return text_buf;
+    text_buf
 }
-
-// fn contents_from_files(file_paths: &[String]) -> Vec<String> {
-
-// }

@@ -26,7 +26,7 @@ impl FromStr for Command {
             }
         };
 
-        return Ok(cmd);
+        Ok(cmd)
     }
 }
 
@@ -40,7 +40,7 @@ impl FromStr for Config {
     type Err = CmdParseError;
 
     fn from_str(config_str: &str) -> Result<Self, CmdParseError> {
-        let parts = config_str.split(" ").collect::<Vec<&str>>();
+        let parts = config_str.split(' ').collect::<Vec<&str>>();
         let command = match Command::from_str(parts[0]) {
             Ok(command) => command,
             Err(err) => {
@@ -48,25 +48,25 @@ impl FromStr for Config {
             }
         };
 
-        let opts = parts[1..].into_iter()
+        let opts = parts[1..].iter()
             .map(|opt| opt.to_string())
             .collect::<Vec<String>>();
 
-        return Ok(Config { command, opts });
+        Ok(Config { command, opts })
     }
 }
 
 impl Config {
-    pub fn parse_args(args: &[String]) -> Result<Vec<Self>, String> {
+    pub fn parse_args(args: &[String]) -> Result<Vec<Self>, &'static str> {
         if args.len() <= 1 {
-            return Err(String::from("Args not enough"));
+            return Err("Not enough arguments");
         }
 
         let raw_args = args[1..].join(" ");
         let config_strs = raw_args.split(" into ");
 
         let configs = config_strs.map(|conf_str| {
-            match Config::from_str(&conf_str) {
+            match Config::from_str(conf_str) {
                 Ok(conf) => conf,
                 Err(err) => {
                     panic!("{}", err);
@@ -76,6 +76,6 @@ impl Config {
 
         // println!("{:?}", configs);
 
-        return Ok(configs);
+        Ok(configs)
     }
 }

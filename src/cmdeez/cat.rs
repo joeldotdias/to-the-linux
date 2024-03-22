@@ -17,24 +17,21 @@ for (i, file_path) in file_paths.iter().enumerate() {
         };
         
         if i < (file_paths.len() - 1) {
-            contents.push_str("\n");
+            contents.push('\n');
         }
     }
     
-    return contents;
+    contents
 }
 
 pub fn cat_write(text_buf: &[String], file_path: &str) {
-    match fs::write(file_path, text_buf.join("\n")) {
-        Err(err) => {
-            panic!("{}", err);
-        }
-        _ => {}
+    if let Err(err) = fs::write(file_path, text_buf.join("\n")) {
+        panic!("{}", err)
     };
 }
 
 pub fn cat_append(text_buf: &mut [String], file_path: &str) {
-    text_buf[0].insert_str(0, "\n");
+    text_buf[0].insert(0, '\n');
 
     let mut req_file = match OpenOptions::new()
         .append(true)
@@ -44,8 +41,10 @@ pub fn cat_append(text_buf: &mut [String], file_path: &str) {
                 panic!("{}", err);
             }
         };
-    
-    req_file.write(text_buf.join("\n").as_bytes()).unwrap();
+
+    if let Err(err) = req_file.write(text_buf.join("\n").as_bytes()) {
+        panic!("Failed to write to {}: {}", file_path, err)
+    }
 }
 
 
