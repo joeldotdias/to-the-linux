@@ -30,7 +30,7 @@ fn to_the_op(config: &Config, prev_out: &str) -> String {
                 let mut to_write = if prev_out.is_empty() { 
                     get_input()
                 } else {
-                    prev_out.split('\n').map(|line| String::from(line))
+                    prev_out.split('\n').map(|line| line.into())
                         .collect::<Vec<String>>()
                 };
                 
@@ -56,13 +56,12 @@ fn to_the_op(config: &Config, prev_out: &str) -> String {
                 get_full_path(f)
             })
             .collect::<Vec<String>>();
-            
-            let piped_input = if !prev_out.is_empty() {
-                Some(prev_out.into())
+
+            curr_out = if !prev_out.is_empty() {
+                word_stats(None, Some(prev_out.into()))
             } else {
-                None
-            };
-            curr_out = word_stats(&file_paths, piped_input);
+                word_stats(Some(&file_paths), None)
+            }
         }
 
         Command::Head => {
