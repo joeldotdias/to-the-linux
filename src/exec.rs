@@ -105,7 +105,7 @@ fn get_input() -> Vec<String> {
             .lock().lines().next()
             .unwrap().unwrap();
         
-        if curr_line.as_str() == ":q" {
+        if &curr_line== ":q" {
             break;
         }
         text_buf.push(curr_line);

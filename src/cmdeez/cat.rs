@@ -6,7 +6,7 @@ use std::{
 pub fn cat_read(file_paths: &[String]) -> String{
     let mut contents = String::new();
 
-for (i, file_path) in file_paths.iter().enumerate() {
+    for (i, file_path) in file_paths.iter().enumerate() {
         match fs::read_to_string(file_path) {
             Ok(file_contents) => {
                 contents.push_str(&file_contents);
